@@ -1,0 +1,49 @@
+Uso di `@MappedSuperclass` in Hibernate e JPA
+
+Cos'è `@MappedSuperclass`?
+`@MappedSuperclass` è un'annotazione in Hibernate e JPA utilizzata per indicare che una classe è una superclasse mappata e non deve essere considerata come un'entità indipendente persistente. Questo significa che la classe superclasse non sarà mappata a una tabella nel database, ma le sue proprietà e annotazioni saranno ereditate dalle sue sottoclassi.
+
+Caratteristiche Principali
+- Non Persistente: La superclasse annotata con `@MappedSuperclass` non corrisponde a una tabella nel database.
+- Ereditarietà delle Proprietà: Le sottoclassi ereditano campi e metodi dalla superclasse.
+- Supporto per Annotazioni: La superclasse può contenere annotazioni JPA/Hibernate come `@Id`, `@Column`, ecc., che saranno applicate alle sottoclassi.
+
+Casi d'Uso
+- Condivisione di Codice Comune: Per condividere campi e metodi comuni tra diverse entità.
+- Gerarchie di Classi Non Persistite: Quando si vuole creare una gerarchia di classi in cui solo le classi figlie sono entità persistite.
+
+Esempio Pratico
+Immaginiamo di avere una superclasse `Persona` con campi comuni che non deve essere mappata a una tabella, ma i suoi campi devono essere ereditati da classi figlie come `Studente` e `Insegnante`.
+
+java
+@MappedSuperclass
+public abstract class Persona {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
+    private String cognome;
+    // altri campi comuni
+}
+
+@Entity
+public class Studente extends Persona {
+    private String corsoDiStudi;
+    // altri campi specifici per Studente
+}
+
+@Entity
+public class Insegnante extends Persona {
+    private String materiaInsegnata;
+    // altri campi specifici per Insegnante
+}
+
+
+In questo esempio, `Persona` è una superclasse che fornisce campi comuni come `id`, `nome`, e `cognome` alle sottoclassi `Studente` e `Insegnante`. Ogni sottoclasse viene mappata a una propria tabella con i propri campi specifici più i campi ereditati da `Persona`.
+
+Considerazioni
+- Non Creare Tabelle: `@MappedSuperclass` non comporta la creazione di una tabella nel database.
+- Riutilizzo del Codice: È un ottimo modo per riutilizzare codice e annotazioni comuni, mantenendo il codice più pulito e organizzato.
+- Limitazioni: Le classi annotate con `@MappedSuperclass` non possono essere utilizzate in query JPQL/HQL, poiché non sono entità.
+
+In sintesi, l'annotazione `@MappedSuperclass` è particolarmente utile quando si ha bisogno di definire una base comune per diverse entità senza la necessità di rappresentare questa base come una tabella nel database. Questo approccio promuove la riutilizzabilità e l'organizzazione del codice in applicazioni JPA/Hibernate.

@@ -1,0 +1,51 @@
+Ereditarietà in Hibernate e JPA
+
+1. Single Table Strategy
+- Descrizione: In questa strategia, una singola tabella viene utilizzata per memorizzare i dati di tutte le classi della gerarchia di ereditarietà.
+- Caso d'uso: Adatta quando le classi non hanno molti campi specifici e la gerarchia non è molto profonda o complessa.
+- Esempio Pratico:
+  java
+  @Entity
+  @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+  @DiscriminatorColumn(name = "tipo", discriminatorType = DiscriminatorType.STRING)
+  public class Veicolo { ... }
+
+  @Entity
+  @DiscriminatorValue("Auto")
+  public class Auto extends Veicolo { ... }
+
+  @Entity
+  @DiscriminatorValue("Moto")
+  public class Moto extends Veicolo { ... }
+  
+
+2. Joined Strategy
+- Descrizione: Utilizza una tabella separata per ciascuna classe figlia, che contiene solo gli attributi specifici del figlio, oltre a una chiave esterna che punta alla tabella del genitore.
+- Caso d'uso: Utile quando le sottoclassi hanno molti attributi distinti.
+- Esempio Pratico:
+  java
+  @Entity
+  @Inheritance(strategy = InheritanceType.JOINED)
+  public class Dipendente { ... }
+
+  @Entity
+  public class Manager extends Dipendente { ... }
+
+  @Entity
+  public class Impiegato extends Dipendente { ... }
+  
+
+3. Table-per-Class Strategy
+- Descrizione: Ogni classe della gerarchia ha la sua tabella, che include sia i propri attributi sia quelli ereditati.
+- Caso d'uso: Adatta quando le sottoclassi hanno comportamenti molto diversi e non si vuole avere nulla a che fare con le unioni.
+- Esempio Pratico:
+  java
+  @Entity
+  @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+  public class Animale { ... }
+
+  @Entity
+  public class Gatto extends Animale { ... }
+
+  @Entity
+  public class Cane extends Animale { ... }

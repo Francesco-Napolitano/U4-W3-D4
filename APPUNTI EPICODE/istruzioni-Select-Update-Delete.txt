@@ -1,0 +1,78 @@
+JPQL (Java Persistence Query Language)
+
+Introduzione a JPQL
+JPQL è un linguaggio di query per JPA (Java Persistence API) che permette di eseguire operazioni su database in un modo che è indipendente dalla struttura del database sottostante. È strettamente allineato con il linguaggio SQL, ma opera sul modello di dominio dell'applicazione invece che direttamente sulle tabelle e colonne del database.
+
+Tipi di Istruzioni in JPQL
+JPQL supporta tre principali tipi di istruzioni:
+1. SELECT: Per recuperare dati.
+2. UPDATE: Per aggiornare dati esistenti.
+3. DELETE: Per eliminare dati.
+
+---
+
+1. Istruzione SELECT in JPQL
+L'istruzione SELECT in JPQL è utilizzata per recuperare oggetti o valori da entità del modello di dominio.
+
+Sintassi di Base
+java
+SELECT [DISTINCT] <expression>
+FROM <entity_name> [AS] <alias>
+[WHERE <condition>]
+[ORDER BY <order_expression> [ASC | DESC]]
+
+
+Esempi di Uso
+- Recupero Semplice: `SELECT e FROM Employee e`
+- Recupero con Condizioni: `SELECT e FROM Employee e WHERE e.salary > 50000`
+- Uso di JOIN: `SELECT e, d FROM Employee e JOIN e.department d WHERE d.name = 'Sales'`
+
+ Casi d'Uso
+- Reporting e Analisi: Recuperare dati per report o analisi.
+- Operazioni di Ricerca: Realizzare funzionalità di ricerca basate su vari criteri.
+
+---
+
+2. Istruzione UPDATE in JPQL
+L'istruzione UPDATE è utilizzata per aggiornare dati esistenti in una o più entità.
+
+Sintassi di Base
+java
+UPDATE <entity_name> [AS] <alias>
+SET <alias.field> = <new_value>
+[WHERE <condition>]
+
+
+Esempi di Uso
+- Aggiornamento Semplice: `UPDATE Employee e SET e.salary = e.salary * 1.1 WHERE e.department.name = 'Sales'`
+- Aggiornamento Condizionale: `UPDATE Product p SET p.price = p.price * 0.9 WHERE p.stock < 50`
+
+Casi d'Uso
+- Aggiornamenti di Massa: Aggiornare un gran numero di record in una sola operazione.
+
+---
+
+3. Istruzione DELETE in JPQL
+L'istruzione DELETE è usata per eliminare dati da una o più entità.
+
+Sintassi di Base
+java
+DELETE FROM <entity_name> [AS] <alias>
+[WHERE <condition>]
+
+
+ Esempi di Uso
+- Eliminazione Semplice: `DELETE FROM Order o WHERE o.status = 'Cancelled'`
+- Eliminazione Condizionale: `DELETE FROM User u WHERE u.lastLogin < :oneYearAgo`
+
+ Casi d'Uso
+- Pulizia dei Dati: Rimuovere record obsoleti o non necessari.
+
+---
+
+Considerazioni Generali
+- Gestione delle Transazioni: Assicurarsi di gestire le transazioni correttamente, specialmente per operazioni UPDATE e DELETE.
+- Impatto sulle Performance: Le query di UPDATE e DELETE di massa possono avere un impatto significativo sulle prestazioni.
+- Sicurezza: Evitare injection vulnerabilities assicurandosi di utilizzare parametri nominati o TypedQuery per l'inserimento di valori.
+
+Questo documento fornisce una panoramica generale su come utilizzare le diverse tipologie di query JPQL. Per ogni specifico caso d'uso, è consigliabile riferirsi alla documentazione specifica e testare le query in un ambiente di sviluppo prima di applicarle in produzione.

@@ -1,0 +1,57 @@
+Espressioni Condizionali in JPQL
+
+Introduzione alle Espressioni Condizionali in JPQL
+Le espressioni condizionali in JPQL (Java Persistence Query Language) sono utilizzate per filtrare i risultati di una query in base a specifici criteri. Queste espressioni possono utilizzare path expressions, operatori relazionali e diversi tipi di dati (numeri, stringhe, booleani) per costruire condizioni complesse.
+
+Tipi di Espressioni Condizionali in JPQL
+
+1. Operatori Relazionali: Come `=`, `>`, `<`, `>=`, `<=`, `<>` (diverso).
+2. BETWEEN: Per verificare se un valore si trova all'interno di un intervallo specificato.
+3. IN: Per verificare se il valore di una path expression appartiene a un elenco specificato di valori.
+4. LIKE: Per pattern matching di stringhe.
+5. IS NULL/IS NOT NULL: Per verificare se un campo è null o non-null.
+
+Esempi di Uso
+
+1. Operatore Relazionale
+java
+SELECT c FROM Categoria c WHERE c.nome = 'libri'
+
+In questo esempio, la query seleziona tutte le entità `Categoria` il cui nome è esattamente 'libri'.
+
+2. Operatore BETWEEN
+java
+SELECT p FROM Prodotto p WHERE p.prezzo BETWEEN 10 AND 20
+
+Questa query seleziona tutti i prodotti il cui prezzo è compreso tra 10 e 20.
+
+3. Operatore IN
+java
+SELECT e FROM Employee e WHERE e.department.name IN ('Sales', 'Marketing')
+
+Questa query seleziona tutti gli impiegati che lavorano nei dipartimenti 'Sales' o 'Marketing'.
+
+4. Operatore LIKE
+java
+SELECT p FROM Persona p WHERE p.nome LIKE 'Mar%'
+
+Questa query seleziona tutte le persone il cui nome inizia con 'Mar'.
+
+5. IS NULL/IS NOT NULL
+java
+SELECT p FROM Prodotto p WHERE p.descrizione IS NOT NULL
+
+Questa query seleziona tutti i prodotti che hanno una descrizione.
+
+Casi d'Uso
+
+- Filtraggio di Dati: Le espressioni condizionali sono essenziali per filtrare i dati recuperati dalle entità in base a specifici criteri.
+- Query Complesse: Combinando diverse espressioni condizionali, è possibile costruire query complesse per rispondere a esigenze di business specifiche.
+- Analisi dei Dati: Utilizzare espressioni condizionali per analizzare i dati, ad esempio, trovare tutti i prodotti in un certo intervallo di prezzo o tutti i dipendenti di un particolare dipartimento.
+
+Considerazioni
+- Prestazioni: Le espressioni condizionali complesse possono influenzare le prestazioni della query, quindi è importante ottimizzarle quando possibile.
+- Sicurezza: Assicurarsi di proteggere contro SQL Injection utilizzando parametri nominati o TypedQuery.
+- Correttezza dei Dati: Verificare che le espressioni condizionali rispecchino accuratamente il modello di dati e le esigenze di business.
+
+Le espressioni condizionali in JPQL offrono una potente flessibilità per interrogare il database in modi che sono sia espressivi che efficienti, consentendo agli sviluppatori di costruire query dinamiche e robuste all'interno delle applicazioni JPA.

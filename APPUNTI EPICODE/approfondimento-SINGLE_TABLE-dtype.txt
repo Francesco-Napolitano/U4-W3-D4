@@ -1,0 +1,54 @@
+Strategia `SINGLE_TABLE` in Hibernate e JPA
+
+Cos'è la Strategia `SINGLE_TABLE`?
+La strategia `SINGLE_TABLE` è un approccio di mappatura dell'ereditarietà in cui una singola tabella del database è utilizzata per rappresentare l'intera gerarchia di una classe. Questo significa che la tabella conterrà colonne per tutti i campi di tutte le classi nella gerarchia.
+
+Caratteristiche Principali
+- Una Tabella Unica: Tutte le classi della gerarchia di ereditarietà sono mappate in una singola tabella.
+- Colonna Discriminante: Utilizza una colonna discriminante (spesso denominata `DTYPE` in Hibernate) per differenziare tra i vari tipi nella gerarchia.
+- Semplicità: Facile da implementare e spesso offre buone prestazioni per gerarchie non troppo complesse.
+
+Casi d'Uso
+- Gerarchie Semplici: Quando le classi nella gerarchia hanno pochi campi unici.
+- Rapida Prototipazione: Utile per prototipare rapidamente un'applicazione senza la necessità di creare molteplici tabelle.
+- Query Semplici: Quando le query attraverso la gerarchia di classi sono frequenti e si preferisce evitare join complessi.
+
+Esempio Pratico
+Immaginiamo di avere una gerarchia di classi per rappresentare diversi tipi di veicoli, come `Auto` e `Moto`.
+
+java
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_veicolo", discriminatorType = DiscriminatorType.STRING)
+public abstract class Veicolo {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String marca;
+    private String modello;
+    // altri campi comuni
+}
+
+@Entity
+@DiscriminatorValue("Auto")
+public class Auto extends Veicolo {
+    private int numeroPorte;
+    // altri campi specifici per Auto
+}
+
+@Entity
+@DiscriminatorValue("Moto")
+public class Moto extends Veicolo {
+    private boolean haSidecar;
+    // altri campi specifici per Moto
+}
+
+
+In questo esempio, tutte le istanze di `Veicolo`, `Auto` e `Moto` sono salvate in una singola tabella `Veicolo`. La colonna `tipo_veicolo` (DTYPE) indica se una riga rappresenta un'`Auto` o una `Moto`.
+
+Considerazioni
+- Sovrapposizione dei Campi: La tabella può contenere molte colonne nulle, soprattutto se le sottoclassi hanno molti campi unici.
+- Scalabilità: Potrebbe non essere la scelta migliore per gerarchie di classi molto complesse o con molte sottoclassi.
+- Modifiche alle Classi: Aggiungere una nuova sottoclasse o un nuovo campo può richiedere modifiche alla struttura della tabella.
+
+In sintesi, la strategia `SINGLE_TABLE` è una scelta efficace per gerarchie semplici e può semplificare lo sviluppo e le query, ma richiede attenzione quando si gestiscono classi con molti campi specifici.

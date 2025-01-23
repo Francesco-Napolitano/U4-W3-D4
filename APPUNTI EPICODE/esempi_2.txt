@@ -1,0 +1,110 @@
+1. Operatore BETWEEN
+java
+public void findProductsInPriceRange(double low, double high) {
+    TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p WHERE p.price BETWEEN :low AND :high", Product.class);
+    query.setParameter("low", low);
+    query.setParameter("high", high);
+    List<Product> products = query.getResultList();
+    // Logica per gestire i prodotti
+}
+
+
+2. Operatore IN
+java
+public void findEmployeesInDepartments(List<String> departmentNames) {
+    TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.department.name IN :names", Employee.class);
+    query.setParameter("names", departmentNames);
+    List<Employee> employees = query.getResultList();
+    // Logica per gestire i dipendenti
+}
+
+
+3. Operatore LIKE (e ILIKE)
+java
+public void findProductsByNamePattern(String pattern) {
+    TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:pattern)", Product.class);
+    query.setParameter("pattern", "%" + pattern + "%");
+    List<Product> products = query.getResultList();
+    // Logica per gestire i prodotti
+}
+
+
+4. IS NULL o IS NOT NULL
+java
+public void findEmployeesWithoutDepartment() {
+    TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.department IS NULL", Employee.class);
+    List<Employee> employees = query.getResultList();
+    // Logica per gestire i dipendenti
+}
+
+
+5. IS EMPTY
+java
+public void findCategoriesWithNoProducts() {
+    TypedQuery<Category> query = em.createQuery("SELECT c FROM Category c WHERE c.products IS EMPTY", Category.class);
+    List<Category> categories = query.getResultList();
+    // Logica per gestire le categorie
+}
+
+
+6. MEMBER OF
+java
+public void findDepartmentsWithEmployee(Employee employee) {
+    TypedQuery<Department> query = em.createQuery("SELECT d FROM Department d WHERE :emp MEMBER OF d.employees", Department.class);
+    query.setParameter("emp", employee);
+    List<Department> departments = query.getResultList();
+    // Logica per gestire i dipartimenti
+}
+
+
+7. Funzioni di Aggregazione: AVG, COUNT, MAX, MIN
+java
+public void getEmployeeStatistics() {
+    Query query = em.createQuery("SELECT AVG(e.salary), COUNT(e), MAX(e.salary), MIN(e.salary) FROM Employee e");
+    Object[] result = (Object[]) query.getSingleResult();
+    // Logica per gestire le statistiche
+}
+
+
+8. GROUP BY
+java
+public void countProductsByCategory() {
+    TypedQuery<Object[]> query = em.createQuery("SELECT c.name, COUNT(p) FROM Category c JOIN c.products p GROUP BY c.name", Object[].class);
+    List<Object[]> results = query.getResultList();
+    // Logica per gestire i risultati
+}
+
+
+9. GROUP BY + HAVING
+java
+public void findPopularCategories(int threshold) {
+    TypedQuery<Object[]> query = em.createQuery("SELECT c.name, COUNT(p) FROM Category c JOIN c.products p GROUP BY c.name HAVING COUNT(p) > :threshold", Object[].class);
+    query.setParameter("threshold", threshold);
+    List<Object[]> results = query.getResultList();
+    // Logica per gestire i risultati
+}
+
+
+10. ORDER BY
+java
+public void findAllEmployeesOrderedByName() {
+    TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e ORDER BY e.name ASC", Employee.class);
+    List<Employee> employees = query.getResultList();
+    // Logica per gestire i dipendenti
+}
+
+
+11. Sottoquery
+java
+public void findEmployeesInLargeDepartments(int departmentSize) {
+    TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.department IN (SELECT d FROM Department d WHERE SIZE(d.employees) > :size)", Employee.class);
+    query.setParameter("size", departmentSize);
+    List<Employee> employees = query.getResultList();
+    // Logica per gestire i dipendenti
+}
+
+
+12. ANY, ALL e SOME
+java
+public void findProductsCheaperThanAtLeastOneInCategory(String categoryName) {
+    TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p WHERE p.price < SOME (SELECT p2.price FROM Category

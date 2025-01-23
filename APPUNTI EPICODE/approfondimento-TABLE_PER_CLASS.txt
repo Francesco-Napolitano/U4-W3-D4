@@ -1,0 +1,54 @@
+Strategia `TABLE_PER_CLASS` in Hibernate e JPA
+
+Cos'è la Strategia `TABLE_PER_CLASS`?
+La strategia `TABLE_PER_CLASS` in Hibernate e JPA è un metodo di mappatura dell'ereditarietà in cui ogni classe concreta nella gerarchia ha la propria tabella nel database. Ogni tabella contiene tutti gli attributi della classe corrispondente, inclusi quelli ereditati dalla classe padre.
+
+Caratteristiche Principali
+- Tabelle Separate per Ogni Classe: Ogni classe concreta ha la sua tabella con tutti i suoi attributi.
+- Nessuna Tabella per le Classi Astratte: Le classi astratte non hanno una tabella corrispondente.
+- Duplicazione di Campi: Gli attributi ereditati sono duplicati in ogni tabella delle sottoclassi.
+
+Generazione degli ID
+- Incompatibilità con `GenerationType.IDENTITY`: A causa della natura della strategia, l'uso di `GenerationType.IDENTITY` non è compatibile poiché richiederebbe un incremento indipendente dell'ID in ogni tabella.
+- Strategie di Generazione Alternative: Si consiglia di usare `GenerationType.SEQUENCE` o `GenerationType.TABLE` per garantire l'unicità degli ID attraverso le diverse tabelle.
+
+Casi d'Uso
+- Indipendenza tra Classi: Quando è necessario che ogni classe abbia la sua tabella indipendente, senza relazioni di join.
+- Strutture Ereditarie Complesse: Utile in situazioni in cui la gerarchia di classi è complessa e le sottoclassi non condividono molti attributi comuni.
+
+Esempio Pratico
+Immaginiamo di avere una gerarchia di classi per rappresentare diversi tipi di pubblicazioni, come `Libro` e `Rivista`.
+
+java
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Pubblicazione {
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE) // Ad esempio, usando TABLE
+    private Long id;
+    private String titolo;
+    private String autore;
+    // altri campi comuni
+}
+
+@Entity
+public class Libro extends Pubblicazione {
+    private int numeroPagine;
+    // altri campi specifici per Libro
+}
+
+@Entity
+public class Rivista extends Pubblicazione {
+    private String periodicità;
+    // altri campi specifici per Rivista
+}
+
+
+In questo esempio, `Libro` e `Rivista` avranno tabelle separate, ognuna con i propri attributi specifici oltre a quelli ereditati da `Pubblicazione`.
+
+Considerazioni
+- Ridondanza dei Dati: Gli attributi comuni sono duplicati in tutte le tabelle, il che può portare a una maggiore occupazione di spazio sul database.
+- Complessità nelle Query: Le query che coinvolgono più sottoclassi possono diventare più complicate poiché non esistono join diretti tra le tabelle.
+- Gestione degli ID: È essenziale scegliere con cura la strategia di generazione degli ID per garantire coerenza e unicità.
+
+La strategia `TABLE_PER_CLASS` è quindi una scelta da considerare quando si ha bisogno di una chiara separazione tra le classi in una gerarchia, pur tenendo conto delle sue implicazioni sulla struttura del database e sulla gestione dei dati.

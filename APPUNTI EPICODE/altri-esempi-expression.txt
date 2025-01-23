@@ -1,0 +1,76 @@
+Funzioni Avanzate in JPQL
+
+Operatori per Collection Types
+JPQL fornisce operatori specifici per lavorare con i tipi di collezione.
+
+1. IS EMPTY / IS NOT EMPTY:
+   - Utilizzato per verificare se una collezione è vuota o meno.
+   - Esempio: `WHERE c.articoli IS EMPTY`
+   
+2. MEMBER OF:
+   - Per testare se un elemento è membro di una collezione.
+   - Esempio: `entity_expression [NOT] MEMBER [OF] collection_value_path_expression`
+
+Funzioni di Aggregazione
+JPQL supporta diverse funzioni di aggregazione, utilizzate per calcolare valori aggregati.
+
+1. AVG, COUNT, MAX, MIN:
+   - Esempi:
+     - `SELECT MAX(a.prezzo) FROM Articolo a`
+     - `SELECT COUNT(c) FROM Categoria c`
+
+GROUP BY e HAVING
+Utilizzati per raggruppare i risultati e filtrare basandosi su condizioni aggregate.
+
+1. GROUP BY:
+   - Raggruppa i risultati basandosi su attributi o relazioni.
+   - Esempio: `SELECT a.categoria, COUNT(a.id) FROM Articolo a GROUP BY a.categoria`
+
+2. HAVING:
+   - Filtra i gruppi creati da GROUP BY.
+   - Esempio: `SELECT c.utente, COUNT(c.id) FROM Categoria c GROUP BY c.utente HAVING COUNT(c.id) > 5`
+
+ORDER BY
+Per ordinare i risultati di una query.
+
+- Esempio: `SELECT c FROM Categoria c ORDER BY c.nome ASC`
+
+Sottoquery
+Sono query annidate utilizzate nelle clausole WHERE o HAVING.
+
+- Esempi:
+  - `SELECT a FROM Articolo a WHERE a.utente IN (SELECT c.utente FROM Categoria c WHERE c.nome LIKE :nome)`
+  - `SELECT a FROM Articolo a WHERE EXISTS (SELECT c FROM Categoria c WHERE c.utente = a.utente)`
+
+Esempi di Codice Java
+
+Named Query
+java
+@Entity
+@NamedQuery(name = "Categoria.findByName", query = "SELECT c FROM Categoria c WHERE c.nome = :nome")
+public class Categoria {
+    // ...
+}
+
+// Uso della Named Query
+TypedQuery<Categoria> query = entityManager.createNamedQuery("Categoria.findByName", Categoria.class);
+query.setParameter("nome", "libri");
+List<Categoria> risultati = query.getResultList();
+
+
+Dynamic JPQL
+java
+String jpql = "SELECT a FROM Articolo a WHERE a.prezzo > :prezzo";
+TypedQuery<Articolo> query = entityManager.createQuery(jpql, Articolo.class);
+query.setParameter("prezzo", 100.0);
+List<Articolo> articoli = query.getResultList();
+
+
+Aggregazione con JPQL Dinamico
+java
+String jpql = "SELECT COUNT(a), a.categoria FROM Articolo a GROUP BY a.categoria HAVING COUNT(a) > 5";
+TypedQuery<Object[]> query = entityManager.createQuery(jpql, Object[].class);
+List<Object[]> risultati = query.getResultList();
+
+
+In questo documento, abbiamo esplorato le funzionalità avanzate di JPQL, includendo il lavoro con collection types, l'uso di funzioni di aggregazione, le clausole GROUP BY, HAVING e ORDER BY, e l'impiego di sottoquery. Abbiamo anche fornito esempi di come queste query possono essere implementate in Java sia con named query che con JPQL dinamico, offrendo agli sviluppatori gli strumenti per creare query complesse e potenti all'interno delle loro applicazioni JPA.

@@ -1,0 +1,97 @@
+Strategia `JOINED` in Hibernate e JPA
+
+Cos'è la Strategia `JOINED`?
+La strategia `JOINED` è un metodo di mappatura dell'ereditarietà in Hibernate e JPA dove vengono create tabelle separate per la classe padre e per ogni classe figlio. Ogni tabella figlio contiene solo gli attributi che non sono già presenti nel padre, oltre a una chiave esterna che collega alla tabella padre.
+
+Caratteristiche Principali
+- Tabelle Separate: Una tabella per la classe padre e una per ciascuna classe figlio.
+- Relazione Tramite Join: Le tabelle figlio sono collegate alla tabella padre tramite una chiave esterna.
+- Evita Colonne Nulle: A differenza della strategia `SINGLE_TABLE`, questa approccio riduce il numero di colonne nulle nelle tabelle.
+
+Casi d'Uso
+- Gerarchie Complesse: Adatta quando le classi nella gerarchia hanno molti campi unici.
+- Migliore Modellazione OOP: Fornisce una rappresentazione più naturale delle gerarchie di classi in un database relazionale.
+- Aggiornamenti Frequenti: Utile quando le classi figlio sono soggette a frequenti aggiornamenti indipendenti.
+
+Esempio Pratico
+Consideriamo una gerarchia di classi per rappresentare diversi tipi di dipendenti, come `Manager` e `Impiegato`.
+
+java
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Dipendente {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String nome;
+    private String cognome;
+    // altri campi comuni
+}
+
+@Entity
+public class Manager extends Dipendente {
+    private String reparto;
+    // altri campi specifici per Manager
+}
+
+@Entity
+public class Impiegato extends Dipendente {
+    private String livello;
+    // altri campi specifici per Impiegato
+}
+
+
+In questo esempio, `Dipendente`, `Manager` e `Impiegato` avranno tabelle separate. La tabella `Dipendente` conterrà campi comuni, mentre `Manager` e `Impiegato` avranno solo i loro campi specifici, più una chiave esterna al `Dipendente`.
+
+Considerazioni sull'Uso di `@DiscriminatorColumn`
+- Nella strategia `JOINED`, non è tipicamente necessario usare `@DiscriminatorColumn` come nella `SINGLE_TABLE`, poiché le tabelle sono già separate.
+- Tuttavia, può essere utile in alcuni casi, specialmente se si utilizzano query polimorfiche o si desidera un'identificazione rapida del tipo di entità.
+
+Considerazioni
+- Performance delle Query: I join tra tabelle possono influenzare le prestazioni, soprattutto con grandi volumi di dati.
+- Complessità della Struttura del Database: Richiede una maggiore attenzione nella progettazione della struttura del database.
+- Aggiornamenti e Modifiche: Aggiungere nuove sottoclassi o modificare la gerarchia può richiedere aggiornamenti della struttura del database.
+
+In conclusione, la strategia `JOINED` è ben adatta per applicazioni dove la corrispondenza tra il modello di dati OOP e il modello relazionale è prioritaria, e dove la complessità e la diversità delle classi nella gerarchia giustificano l'uso di tabelle separate.
+
+----------------------------------------------------------------------------------------------------------------
+Nell'esempio precedente di `Dipendente`, `Manager` e `Impiegato`, supponiamo di voler aggiungere una colonna discriminante per identificare rapidamente il tipo di entità senza dover eseguire un join. Questo può essere particolarmente utile in scenari di query polimorfiche.
+
+Esempio con `@DiscriminatorColumn` in Strategia `JOINED`
+java
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "tipo_dipendente", discriminatorType = DiscriminatorType.STRING)
+public abstract class Dipendente {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String nome;
+    private String cognome;
+    // altri campi comuni
+}
+
+@Entity
+@DiscriminatorValue("Manager")
+public class Manager extends Dipendente {
+    private String reparto;
+    // altri campi specifici per Manager
+}
+
+@Entity
+@DiscriminatorValue("Impiegato")
+public class Impiegato extends Dipendente {
+    private String livello;
+    // altri campi specifici per Impiegato
+}
+
+
+In questo caso, la colonna `tipo_dipendente` nella tabella `Dipendente` sarà utilizzata per discriminare tra le varie sottoclassi (`Manager`, `Impiegato`). Se si effettua una query sulla tabella `Dipendente`, si può immediatamente vedere il tipo di ogni record senza dover eseguire join sulle tabelle delle sottoclassi.
+
+Vantaggi dell'Uso di `@DiscriminatorColumn` in `JOINED`
+- Query Polimorfiche Semplificate: Facilita la scrittura di query che trattano diverse sottoclassi in modo polimorfico.
+- Identificazione Rapida: Permette di identificare rapidamente il tipo di entità senza join aggiuntivi.
+
+Considerazioni
+- Non Sempre Necessario: È importante notare che, se non si hanno esigenze specifiche come le query polimorfiche, l'aggiunta di una colonna discriminante potrebbe non essere necessaria e potrebbe aggiungere una certa ridondanza.
+- Progettazione Attenta: La scelta di aggiungere una colonna discriminante dovrebbe essere guidata dalla specifica necessità del caso d'uso e dalla comprensione del modello di dati.

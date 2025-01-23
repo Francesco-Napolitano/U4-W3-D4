@@ -1,0 +1,49 @@
+1. Eliminazione di Articoli per Categoria
+Questo esempio mostra come eliminare tutti gli articoli appartenenti a una specifica categoria.
+java
+public void deleteArticlesByCategory(String categoryName) {
+    EntityTransaction transaction = em.getTransaction();
+    transaction.begin();
+
+    Query deleteQuery = em.createQuery("DELETE FROM Articolo a WHERE a.categoria.nome = :categoryName");
+    deleteQuery.setParameter("categoryName", categoryName);
+    int deletedCount = deleteQuery.executeUpdate();
+
+    transaction.commit();
+
+    if (deletedCount > 0) System.out.println("Articoli eliminati nella categoria " + categoryName);
+    else System.out.println("Nessun articolo trovato nella categoria " + categoryName);
+}
+2. Aggiornamento del Salario dei Dipendenti di un Dipartimento
+Questo esempio incrementa il salario dei dipendenti di un dato dipartimento.
+java
+public void increaseSalaryByDepartment(String departmentName, double increment) {
+    EntityTransaction transaction = em.getTransaction();
+    transaction.begin();
+
+    Query updateSalaryQuery = em.createQuery("UPDATE Employee e SET e.salary = e.salary + :increment WHERE e.department.name = :deptName");
+    updateSalaryQuery.setParameter("increment", increment);
+    updateSalaryQuery.setParameter("deptName", departmentName);
+    int updatedCount = updateSalaryQuery.executeUpdate();
+
+    transaction.commit();
+
+    if (updatedCount > 0) System.out.println("Salario aggiornato per i dipendenti del dipartimento " + departmentName);
+    else System.out.println("Nessun dipendente trovato nel dipartimento " + departmentName);
+}
+3. Ricerca e Stampa di Categorie Basate su un Criterio
+Questo esempio cerca e stampa tutte le categorie che corrispondono a un certo criterio.
+java
+public void findAndPrintCategoriesByName(String name) {
+    TypedQuery<Categoria> query = em.createQuery("SELECT c FROM Categoria c WHERE c.nome LIKE :name", Categoria.class);
+    query.setParameter("name", "%" + name + "%");
+    List<Categoria> categories = query.getResultList();
+
+    if (!categories.isEmpty()) {
+        categories.forEach(categoria -> System.out.println(categoria.getNome()));
+    } else {
+        System.out.println("Nessuna categoria trovata con il nome " + name);
+    }
+}
+
+In questi esempi, viene dimostrato l'uso delle transazioni di JPA e di vari tipi di operazioni di query JPQL per la manipolazione e il recupero dei dati nel database. Ricorda che è importante gestire le transazioni in modo appropriato per garantire l'integrità dei dati e gestire eventuali eccezioni che possono verificarsi durante l'esecuzione delle operazioni sul database.

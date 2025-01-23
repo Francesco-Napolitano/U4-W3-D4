@@ -1,0 +1,54 @@
+Path Expressions in JPQL
+
+Introduzione alle Path Expressions
+In JPQL (Java Persistence Query Language), le Path Expressions sono usate per navigare attraverso le relazioni tra le entità. Una Path Expression è composta da una variabile identificatrice seguita dall'operatore di navigazione “.” e da un campo persistente o un campo associazione. Questo permette di accedere a proprietà e relazioni delle entità in modo espressivo e flessibile.
+
+Tipi di Path Expressions
+1. Campo Persistente: Accede direttamente a un attributo dell'entità.
+2. Campo Associazione: Rappresenta relazioni tra entità, come One-To-One, One-To-Many, Many-To-One, e Many-To-Many.
+
+Sintassi di Base
+java
+<variable_identifier>.<field_or_association>
+
+
+Esempi di Uso
+
+1. Accesso a Campo Persistente
+Se `Persona` ha un campo `nome`, si può scrivere:
+java
+SELECT p.nome FROM Persona p
+
+
+2. Accesso a Campo Associazione
+Se `Persona` è in relazione Many-To-Many con `Associazione`, si può accedere alla collezione di associazioni:
+java
+SELECT distinct p FROM Persona p WHERE p.associazioni is NOT EMPTY
+
+
+Casi d'Uso
+
+Verificare la Presenza di Relazioni
+Per verificare se un'entità è in relazione con altre entità, come nell'esempio di `Persona` e `Associazione`:
+java
+SELECT p FROM Persona p WHERE p.associazioni is NOT EMPTY
+
+
+Filtrare Basandosi su Attributi di Entità Correlate
+Per filtrare entità basandosi su attributi di entità correlate, ad esempio, selezionare tutte le persone che appartengono a una specifica associazione:
+java
+SELECT p FROM Persona p JOIN p.associazioni a WHERE a.nome = 'AssociazioneX'
+
+
+Ordinare Basandosi su Attributi di Entità Correlate
+Per ordinare i risultati basandosi su attributi di entità correlate, ad esempio, ordinare persone in base al nome di un'associazione a cui appartengono:
+java
+SELECT p FROM Persona p JOIN p.associazioni a ORDER BY a.nome
+
+
+Considerazioni
+- Performance: L'uso delle Path Expressions, specialmente in join complessi, può influenzare le prestazioni. È importante ottimizzare le query e considerare l'uso di `JOIN FETCH` per ridurre il problema del N+1 SELECT.
+- Correttezza della Query: Assicurarsi che le Path Expressions rispecchino correttamente il modello di dominio e le relazioni tra le entità.
+- Sicurezza: Evitare problemi di injection costruendo le query in modo sicuro, ad esempio utilizzando parametri nominati.
+
+In conclusione, le Path Expressions in JPQL offrono un modo potente e flessibile per navigare e interagire con il modello di dominio di un'applicazione, permettendo query complesse e ricche di informazioni. La comprensione e l'uso corretto di queste espressioni sono fondamentali per sfruttare appieno le capacità di JPA.

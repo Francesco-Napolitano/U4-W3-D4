@@ -1,0 +1,37 @@
+JPA Query API: JPQL vs SQL
+
+La Java Persistence API (JPA) offre una Query API che permette agli sviluppatori di interrogare i database utilizzando Java Persistence Query Language (JPQL) o SQL nativo. La differenza fondamentale tra queste due soluzioni sta nel tipo di risultato che restituiscono e nel modo in cui interagiscono con il modello di dominio dell'applicazione.
+
+JPQL (Java Persistence Query Language)
+- Orientato alle Entità: JPQL opera sul modello delle entità e delle loro relazioni, non direttamente sulle tabelle del database.
+- Risultati come Oggetti: Restituisce entità (o collezioni di entità) che sono gestite dal contesto di persistenza.
+- Portabilità: Le query JPQL sono portabili tra diversi database poiché non dipendono dalla sintassi specifica del database.
+- Esempio:
+  java
+  String jpql = "SELECT e FROM Employee e WHERE e.department.name = :deptName";
+  TypedQuery<Employee> query = entityManager.createQuery(jpql, Employee.class);
+  query.setParameter("deptName", "Sales");
+  List<Employee> employees = query.getResultList();
+  
+
+  In questo esempio, la query JPQL seleziona entità `Employee` dal dipartimento 'Sales'. La query è scritta in termini di classi e proprietà Java, non tabelle e colonne.
+
+SQL Nativo
+- Orientato ai Record: Le query SQL native operano direttamente sulle tabelle e colonne del database.
+- Risultati come Record: Restituisce record che non sono automaticamente mappati ad entità JPA.
+- Dipendenza dal Database: La sintassi può variare in base al database specifico utilizzato.
+- Esempio:
+  java
+  String sql = "SELECT * FROM employees WHERE department_name = ?";
+  Query query = entityManager.createNativeQuery(sql, Employee.class);
+  query.setParameter(1, "Sales");
+  List<Employee> employees = query.getResultList();
+  
+
+In questo esempio, la query SQL nativa seleziona record dalla tabella `employees` che corrispondono al dipartimento 'Sales'. Anche se in questo caso i risultati vengono mappati alle entità `Employee`, questo passaggio non è automatico come nel caso di JPQL.
+
+Considerazioni
+- Quando usare JPQL: Ideale per la maggior parte delle operazioni CRUD e quando si desidera sfruttare i vantaggi dell'OOP.
+- Quando usare SQL Nativo: Utile per query complesse, ottimizzazioni specifiche del database, o quando si interagisce con un database legacy non completamente compatibile con JPA.
+
+Entrambe le opzioni hanno il loro posto in JPA, e la scelta tra JPQL e SQL nativo dipenderà dalle esigenze specifiche dell'applicazione, dalla complessità delle operazioni di query e dalle caratteristiche del database sottostante.
