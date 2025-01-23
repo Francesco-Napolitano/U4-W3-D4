@@ -1,12 +1,13 @@
 package org.epicode;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
-@Table (name = "evento" )
-public class Eventi {
+@Table (name = "evento")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_veicolo" , discriminatorType = DiscriminatorType.STRING)
+public abstract class Eventi {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -28,7 +29,6 @@ public class Eventi {
     private Integer maxPartecipanti;
 
     public Eventi (){
-
     }
 
     public Eventi (String t, LocalDate dataE, String d, Boolean ev, Integer partecipanti) {
